@@ -9,13 +9,17 @@ class List(models.Model):
 		return self.username
 
 class Todo(models.Model):
-	todo_text = models.ForeignKey(List, on_delete=models.CASCADE)
+	todo_text = models.TextField(null=True)
+	list = models.ForeignKey(List, on_delete=models.CASCADE, null=True)
 
 class Doing(models.Model):
-	doing_text = models.ForeignKey(List, on_delete=models.CASCADE)
+	doing_text = models.TextField(null=True)
+	list = models.ForeignKey(List, on_delete=models.CASCADE, null=True)
 
 class Test(models.Model):
-	test_text = models.ForeignKey(List, on_delete=models.CASCADE)
+	test_text = models.TextField(null=True)
+	list = models.ForeignKey(List, on_delete=models.CASCADE, null=True)
 
 class Done(models.Model):
-	done_text = models.ForeignKey(List, on_delete=models.CASCADE)
+	done_text = models.TextField(null=True)
+	list = models.ForeignKey(List, on_delete=models.CASCADE, null=True)
