@@ -1,0 +1,37 @@
+{% extends 'list/base.html' %}
+
+{% block content %}
+    <div class="lists">
+      <div class="row">
+        <ul id="sortable1" class="connectedSortable collection col s3">
+        	<li class="ui-state-default ui-state-disabled collection-item">TO DO</li>
+          	<li class="ui-state-default ui-state-disabled collection-item"></li>
+          	{% if list.todo_set.all() %}
+          		{% for item in list.todo_set.all() %}
+          			<li class="collection-item">{{ item.todo_text }}</li>
+          		{% endfor %}
+          	{% endif %}
+        </ul>
+
+        <ul id="sortable2" class="connectedSortable collection col s3">
+        	<li class="ui-state-default ui-state-disabled collection-item">DOING</li>
+          	<li class="ui-state-default ui-state-disabled collection-item"></li>
+          	{% if list.doing_set.all() %}
+          		{% for item in list.doing_set.all() %}
+          			<li class="collection-item">{{ item.doing_text }}</li>
+          		{% endfor %}
+          	{% endif %}
+        </ul>
+
+        <ul id="sortable3" class="connectedSortable collection col s3">
+        	<li class="ui-state-default ui-state-disabled collection-item">TEST</li>
+          	<li class="ui-state-default ui-state-disabled collection-item"></li>
+        </ul>
+
+        <ul id="sortable4" class="connectedSortable collection col s3">
+        	<li class="ui-state-default ui-state-disabled collection-item">DONE</li>
+          	<li class="ui-state-default ui-state-disabled collection-item"></li>
+        </ul>
+      </div>
+    </div>
+{% endblock %}

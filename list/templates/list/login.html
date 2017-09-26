@@ -1,0 +1,35 @@
+{% extends 'list/base.html' %}
+
+{% block content %}
+	<h2 class="header">Login</h2>
+	{% if error_message %}
+		<div class="row">
+			<div class="col s6 offset-s3"><strong>{{ error_message }}</strong></div>
+		</div>
+	{% endif %}
+		<form action="{% url 'list:login' %}" method="post">
+			{% csrf_token %}
+			<div class="row">
+				<div class="input-field col s6 offset-s3">
+					<input id="user" name="username" type="text">
+					<label for="user">Usuário</label>
+				</div>
+			</div>
+			<div class="row">
+				<div class="input-field col s6 offset-s3">
+					<input id="password" name="password" type="password" class="validate">
+					<label for="password">Senha</label>
+				</div>
+			</div>
+			<div class="row">
+		        <button class="btn waves-effect waves-light col s6 offset-s3" name="action" type="submit">Logar
+		        <i class="material-icons right">send</i>
+		        </button>
+	      	</div>
+			<div class="row">
+		        <a href="{% url 'list:signup' %}" class="btn waves-effect waves-light col s6 offset-s3">Criar conta
+		        <i class="material-icons right">send</i>
+		        </a>
+	      	</div>
+		</form>
+{% endblock %}

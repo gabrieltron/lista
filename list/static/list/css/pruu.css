@@ -1,0 +1,32 @@
+ul {
+	float: left;
+	min-height: : 100%;
+}
+
+#sortable1, #sortable2, #sortable3, #sortable4 {
+	overflow: visible;
+}
+
+li {
+	cursor: pointer;
+	word-wrap: break-word;
+}
+
+.button {
+}
+
+.ui-state-disabled {
+	cursor: default;
+	font-weight: bold;
+	text-align: center;
+}
+
+body {
+	display: flex;
+	min-height: 100vh;
+	flex-direction: column;
+}
+
+main {
+	flex: 1 0 auto;
+}
