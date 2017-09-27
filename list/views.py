@@ -1,33 +1,26 @@
 # -*- coding: utf-8 -*-
 from django.shortcuts import render, redirect
 from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth import authenticate, get_user_model
+from django.contrib.auth import authenticate
 from django.contrib.auth import login as auth_login
 from django.contrib.auth.models import User
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import loader
 from django.db import IntegrityError
 from django.urls import reverse
-from django.contrib.sessions.models import Session
 
-from .models import List
+from .models import Board
 
 def list(request):
-	user = get_user_model()
 	if request.user.is_authenticated():
-		list = List.objects.filter(username=user.username)
-		todo = list.todo_set.all()
-		doing = list.doing_set.all()
-		test = list.test_set.all()
-		done = list.done_set.all()
-		return render(request, 'list/list.html', {
-			'todo': todo,
-			'doing': doing,
-			'test': test,
-			'done': done
+		board = Board.objects.get(username=request.user.username)
+		r = board.rows()
+		render(request, 'list/list.html', {
+			'rows': r
 			})
 	else:
 		return HttpResponseRedirect(reverse('list:login', None))
+
 
 def login(request):
 	if request.method == 'POST':
@@ -60,11 +53,10 @@ def signup(request):
 					'error_message': "Esse usuário já existe :("
 					})
 			user.save()
-			q = List(username=username)
-			q.todo_set.create(todo_text='blerg')
+			q = Board(username=username)
 			q.save()
 			auth_login(request, user)
-			HttpResponseRedirect(reverse('list:list', None))
+			return HttpResponseRedirect(reverse('list:list', None))
 		else:
 			return render(request, 'list/signup.html', {
 				'error_message': "Verifique a senha novamente (deve ser diferente de nula)!"

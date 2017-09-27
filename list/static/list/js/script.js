@@ -8,10 +8,22 @@ function newli() {
 
 $(function() {
   $("#sortable1, #sortable2, #sortable3, #sortable4").sortable( {
-    items: "li:not(.ui-state-disabled)"
-  });
-  $("#sortable1, #sortable2, #sortable3, #sortable4").sortable( {
-    connectWith: ".connectedSortable"
+    items: "li:not(.ui-state-disabled)",
+    connectWith: ".connectedSortable",
+    update: function (event, ui) {
+      $.ajax({
+        url: '{% url \'list:login\' %}',
+        data: {
+          'username': (ui.item).text()
+        },
+        dataType: 'json',
+        success: function (data) {
+          if (data.is_taken) {
+            alert("A user with this username already exists.");
+          }
+        }
+      });
+    }
   });
 
   $("#sortable1 li, #sortable2 li, #sortable3 li, #sortable4 li").disableSelection();

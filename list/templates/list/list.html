@@ -3,45 +3,25 @@
 {% block content %}
     <div class="lists">
       <div class="row">
-        <ul id="sortable1" class="connectedSortable collection col s3">
-        	<li class="ui-state-default ui-state-disabled collection-item">TO DO</li>
-          	<li class="ui-state-default ui-state-disabled collection-item"></li>
-          	{% if todo %}
-          		{% for item in todo %}
-          			<li class="collection-item">{{ item.todo_text }}</li>
-          		{% endfor %}
-          	{% endif %}
-        </ul>
-
-        <ul id="sortable2" class="connectedSortable collection col s3">
-        	<li class="ui-state-default ui-state-disabled collection-item">DOING</li>
-          	<li class="ui-state-default ui-state-disabled collection-item"></li>
-          	{% if doing %}
-          		{% for item in doing %}
-          			<li class="collection-item">{{ item.doing_text }}</li>
-          		{% endfor %}
-          	{% endif %}
-        </ul>
-
-        <ul id="sortable3" class="connectedSortable collection col s3">
-        	<li class="ui-state-default ui-state-disabled collection-item">TEST</li>
-          <li class="ui-state-default ui-state-disabled collection-item"></li>
-            {% if test %}
-              {% for item in test %}
-                <li class="collection-item">{{ item.test_text }}</li>
-              {% endfor %}
-            {% endif %}
-        </ul>
-
-        <ul id="sortable4" class="connectedSortable collection col s3">
-        	<li class="ui-state-default ui-state-disabled collection-item">DONE</li>
-          <li class="ui-state-default ui-state-disabled collection-item"></li>
-            {% if done %}
-              {% for item in list.doing_set.all() %}
-                <li class="collection-item">{{ item.doing_text }}</li>
-              {% endfor %}
-            {% endif %}
-        </ul>
+      {% if row %}
+        {% for r in row %}
+          <ul id="sortable1" class="connectedSortable collection col s3">
+           	<li class="ui-state-default ui-state-disabled collection-item">{{ r.name }}</li>
+          </ul>
+        {% endfor %}
+      {% endif %}
+      </div>
+    </div>
+    <div class="add-remove">
+      <div class="row">
+        <div class="input-field col s6 offset-s3">
+          <input id="todo" type="text">
+          <label for="todo">Digite um afazer</label>
+        </div>
+      </div>
+      <div class="row">
+        <a class="waves-effect waves-light btn col s3 offset-s3" id="btn1">Cadastrar afazer</a>
+        <a class="waves-effect waves-light btn col s3" id="btn2">Limpar done</a>
       </div>
     </div>
 {% endblock %}
