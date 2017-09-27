@@ -1,9 +1,8 @@
 ul {
-	float: left;
-	min-height: : 100%;
+	background-color: white;
 }
 
-#sortable1, #sortable2, #sortable3, #sortable4 {
+#sortable1, #sortable2, #sortable3, #sortable4, #rows {
 	overflow: visible;
 }
 

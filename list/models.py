@@ -4,36 +4,55 @@ from django.db import models
 # Create your models here.
 class Board(models.Model):
 	username = models.CharField(max_length=50)
-	first_row = 0
+	first_row = models.IntegerField(default=0)
+	size = models.IntegerField(default=0)
 	def __str__(self):
 		return self.username
 
-	def sort(row, position):
-		cur = Row.objects.get(id=first_row)
-		i = 1
-		for cur in range(1, position):
-			if (i == position) | (cur.front == 0):
-				break
+	def sort(self, row, position, new):
+		if self.size != 0:
+			cur = self.row_set.get(id=self.first_row)
+			end = False
+			for i in range(1, (position+1)):
+				if (cur.front == 0):
+					end = True
+					break
+				else:
+					cur = self.row_set.get(id=cur.front)
+			if not end:
+				if cur.back != 0:
+					back = self.row_set.get(id=cur.back)
+					back.front = row.id
+					back.save()
+				row.back = cur.back
+				cur.back = row.id
+				row.front = cur.id
+				row.save()
+				cur.save()
 			else:
-				cur = Row.objects.get(id=cur.front)
-				i+=1
-		previous = Row.objects.get(id=cur.back)
-		row.front = cur.id
-		cur.back = row.id
-		previos.front = row.id
+				cur.front = row.id
+				row.back = cur.id
+				cur.save()
+				row.save()
+		else:
+			self.first_row = row.id
+		if new:
+			self.size+=1
 
 	def rows(self):
-		cur = Row.objects.get(id=self.first_row)
 		x = []
-		while cur.front != 0:
+		try:
+			cur = self.row_set.get(id=self.first_row)
+			while cur.front != 0:
+				x.append(cur)
+				cur = self.row_set.get(id=cur.front)
 			x.append(cur)
-			cur = Row.objects.get(id=cur.front)
-		x.append(cur)
+		except Row.DoesNotExist:
+			pass
 		return x
-
 class Row(models.Model):
-	back = 0;
-	front = 0;
+	back = models.IntegerField(default=0)
+	front = models.IntegerField(default=0)
 	name = models.TextField()
 	board = models.ForeignKey(Board, on_delete=models.CASCADE)
 

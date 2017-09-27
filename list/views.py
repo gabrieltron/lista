@@ -9,14 +9,14 @@ from django.template import loader
 from django.db import IntegrityError
 from django.urls import reverse
 
-from .models import Board
+from .models import Board, Row
 
 def list(request):
 	if request.user.is_authenticated():
 		board = Board.objects.get(username=request.user.username)
-		r = board.rows()
-		render(request, 'list/list.html', {
-			'rows': r
+		row = board.rows()
+		return render(request, 'list/list.html', {
+			'row': row
 			})
 	else:
 		return HttpResponseRedirect(reverse('list:login', None))
