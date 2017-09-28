@@ -8,7 +8,10 @@
           <ul id="sortable1" class="connectedSortable collection col s3">
            	<li class="ui-state-default ui-state-disabled collection-header"><h5>{{ r.name }}</h5></li>
           </ul>
- 
+          {% if forloop.counter|divisibleby:4 %}
+            </div>
+            <div class="row rows ui-state-default" id="rows">
+          {% endif %}
         {% endfor %}
       {% endif %}
       </div>

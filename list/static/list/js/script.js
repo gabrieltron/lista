@@ -22,8 +22,26 @@ $(function() {
     connectWith: ".connectedSortable",
   });
 
+  var allRows = [];
   $("#rows, #rows1").sortable( {
     connectWith: ".rows",
+    update: function(event, ui) {
+      if (this === ui.item.parent()[0]){
+        $( "ul" ).each(function( index ) {
+          allRows.push($(this).html());
+        });
+        window.alert(allRows);
+        $(".lists").html("<div class=\"row rows ui-state-default\" id=\"rows1\">");
+        for (i = 0; i < allRows.length; i++) {
+          var atual =  $("#rows1").html();
+          if (allRows[i] != '') {
+            window.alert(allRows[i]);
+            $("#rows1").append("<ul id=\"sortable1\" class=\"connectedSortable collection col s3\">" + allRows[i] +  "</ul>");
+          }
+        }
+        $(".lists").append("</div>");
+    }
+    },
   });
 
   $("#sortable1 li, #sortable2 li, #sortable3 li, #sortable4 li").disableSelection();
