@@ -3,7 +3,7 @@ function newli() {
     $("#todo").val('');
     var atual =  $("#sortable1").html();
     if (afazer != null && afazer != "")
-      $("#sortable1").html(atual + "<li class=\"collection-item\">" + afazer + "</li>");
+      $("#sortable1").append("<li class=\"collection-item\">" + afazer + "</li>");
 }
 
 function newrow() {
@@ -11,41 +11,39 @@ function newrow() {
     $("#newrow").val('');
     var atual = $("#rows").html();
     if (row != null && row != "")
-      $("#rows").html(atual + "<ul id=\"sortable1\" class=\"connectedSortable collection col s3\">"
+      $("#rows").html(atual + "<ul id=\"sortable1\" class=\"connectedSortable\">"
         +"<li class=\"ui-state-default ui-state-disabled collection-header\"><h5>" + row + "</h5></li>"
         +"</ul>")
 }
 
+function ord() {
+        var allRows = [];
+}
+
 $(function() {
-  $("#sortable1, #sortable2").sortable( {
+  $("#sortable1").sortable( {
     items: "li:not(.ui-state-disabled)",
     connectWith: ".connectedSortable",
   });
 
-  var allRows = [];
-  $("#rows, #rows1").sortable( {
+  $("#rows").sortable( {
     connectWith: ".rows",
-    update: function(event, ui) {
-      if (this === ui.item.parent()[0]){
-        $( "ul" ).each(function( index ) {
-          allRows.push($(this).html());
-        });
-        window.alert(allRows);
-        $(".lists").html("<div class=\"row rows ui-state-default\" id=\"rows1\">");
-        for (i = 0; i < allRows.length; i++) {
-          var atual =  $("#rows1").html();
-          if (allRows[i] != '') {
-            window.alert(allRows[i]);
-            $("#rows1").append("<ul id=\"sortable1\" class=\"connectedSortable collection col s3\">" + allRows[i] +  "</ul>");
-          }
-        }
-        $(".lists").append("</div>");
-    }
+    start: function(event, ui) {
+      var maior = 0;
+      $( "ul" ).each(function( index ) {
+        if ($(this).height() > maior)
+          maior = $(this).height();
+      });
     },
+    stop: function(event, ui) {
+      $( "ul" ).each(function( index ) {
+        $(this).css({"width":"", "height":"100%", "top": "", "left" : ""});
+      });
+    }
   });
 
   $("#sortable1 li, #sortable2 li, #sortable3 li, #sortable4 li").disableSelection();
-  $("#rows, #rows1").disableSelection();
+  $("#rows").disableSelection();
 
   $("#btn1").click(function() {
     newli();
@@ -54,6 +52,7 @@ $(function() {
   $("input#todo").keypress(function(e) {
     if(e.which == 13) {
       newli();
+      ord();
     }
   });
 

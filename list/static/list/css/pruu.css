@@ -1,10 +1,25 @@
 ul {
 	background-color: white;
-	position: relative;
+	width: 24%;
+	display: inline-grid;
+	height: 100%;
+	border: 1px solid #e3e4e5;
+	border-top-left-radius: 5px;
+ 	border-bottom-left-radius: 5px;
+ 	border-top-right-radius: 5px;
+ 	border-bottom-left-radius: 5px;
+ }
+
+.lists {
+	width: 100%;
 }
 
 #sortable1, #sortable2, #sortable3, #sortable4, #rows {
 	overflow: visible;
+}
+
+table {
+	float: left;
 }
 
 li {
