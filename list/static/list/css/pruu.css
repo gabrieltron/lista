@@ -1,30 +1,38 @@
 ul {
 	background-color: white;
-	width: 24%;
+	width: 25%;
 	display: inline-grid;
 	height: 100%;
 	border: 1px solid #e3e4e5;
 	border-top-left-radius: 5px;
- 	border-bottom-left-radius: 5px;
+ 	border-bottom-right-radius: 5px;
  	border-top-right-radius: 5px;
  	border-bottom-left-radius: 5px;
+ 	vertical-align: top;
+ 	margin-top: 3vh;
  }
-
-.lists {
-	width: 100%;
-}
 
 #sortable1, #sortable2, #sortable3, #sortable4, #rows {
 	overflow: visible;
+}
+
+.rows {
+	font-size: 0px;
 }
 
 table {
 	float: left;
 }
 
-li {
+.collection-item{
+	border-bottom-right-radius: 5px;
+ 	border-bottom-left-radius: 5px;
+	background-color: white;
 	cursor: pointer;
 	word-wrap: break-word;
+	font-size: 1vw;
+	padding: 1vh 1vw 1vh 3vw;
+	border-top: 1px solid #e3e4e5;
 }
 
 .button {
