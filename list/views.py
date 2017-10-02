@@ -14,12 +14,19 @@ from .models import Board, Row
 def list(request):
 	if request.user.is_authenticated():
 		board = Board.objects.get(username=request.user.username)
-		row = board.rows()
+		row = board.retrieve()
 		return render(request, 'list/list.html', {
 			'row': row
 			})
 	else:
 		return HttpResponseRedirect(reverse('list:login', None))
+
+def updateRows(request):
+	rows = request.POST['rows']
+	i = 1
+	board = Board.objects.get(username=request.user.username)
+	for name in rows:
+		user.sort()
 
 
 def login(request):
