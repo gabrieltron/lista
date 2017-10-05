@@ -11,6 +11,15 @@ from django.urls import reverse
 
 from .models import Board, Row
 
+def updateRows(request):
+	if request.user.is_authenticated() & request.method == 'POST':
+		row_names = request.POST['rows']
+		board = Board.objects.get(username=request.user.username)
+	for name in rows:
+		user.sort()
+
+
+
 def list(request):
 	if request.user.is_authenticated():
 		board = Board.objects.get(username=request.user.username)
@@ -20,14 +29,6 @@ def list(request):
 			})
 	else:
 		return HttpResponseRedirect(reverse('list:login', None))
-
-def updateRows(request):
-	rows = request.POST['rows']
-	i = 1
-	board = Board.objects.get(username=request.user.username)
-	for name in rows:
-		user.sort()
-
 
 def login(request):
 	if request.method == 'POST':

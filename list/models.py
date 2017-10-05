@@ -9,40 +9,28 @@ class Board(models.Model):
 	def __str__(self):
 		return self.username
 
-	def sort(self, row, position, new):
+	def sort(self, row, position):
 		if self.size != 0:
 			cur = self.row_set.get(id=self.first_row)
-			end = False
-			for i in range(1, position):
-				if (cur.front == 0):
-					end = True
-					break
-				else:
-					cur = self.row_set.get(id=cur.front)
-			if not end:
-				if cur.back != 0:
-					back = self.row_set.get(id=cur.back)
-					back.front = row.id
-					back.save()
-				row.back = cur.back
-				cur.back = row.id
-				row.front = cur.id
-				row.save()
-				cur.save()
-			else:
-				cur.front = row.id
-				row.back = cur.id
-				cur.save()
-				row.save()
+			for i in range(0, (position - 1)):
+				cur = self.row_set.get(id=cur.front)
+			row.front = cur.front
+			cur.front = row.id
+			row.back = cur.id
+			if row.front != 0:
+				f = self.row_set.get(id=row.front)
+				f.back = row.id
+				f.save()
+			row.save()
+			cur.save()
 		else:
 			self.first_row = row.id
-		if new:
-			self.size+=1
+		self.size+=1
 		self.save()
 
-	def remove(self, row, delete):
+	def remove(self, row):
 		cur = self.row_set.get(id=self.first_row)
-		for i in range(1, (self.size+1)):
+		for i in range(0, self.size):
 			if cur.name == row.name:
 				break;
 			else:
@@ -57,9 +45,8 @@ class Board(models.Model):
 			front = self.row_set.get(id=cur.front)
 			front.back = cur.back
 			front.save()
-		if delete:
-			cur.delete()
-			self.size-=1
+		cur.delete()
+		self.size-=1
 		self.save()
 
 	def retrieve(self):

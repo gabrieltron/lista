@@ -6,5 +6,6 @@ app_name = 'list'
 urlpatterns = [
 	url(r'^$', views.login, name='login'),
 	url(r'register/$', views.signup, name='signup'),
-	url(r'list/$', views.list, name='list')
+	url(r'list/$', views.list, name='list'),
+	url(r'updateRows/$', views.list, name='updateRows')
 ]
