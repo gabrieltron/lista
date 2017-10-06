@@ -6,14 +6,47 @@ function newli() {
       $("#sortable1").append("<li class=\"collection-item\">" + afazer + "</li>");
 }
 
-function newrow() {
-    var row = $("#newrow").val();
-    $("#newrow").val('');
-    var atual = $("#rows").html();
-    if (row != null && row != "")
-      $("#rows").html(atual + "<ul id=\"sortable1\" class=\"connectedSortable\">"
-        +"<li class=\"ui-state-disabled collection-header\"><h5>" + row + "</h5></li>"
-        +"</ul>")
+function newrow(name) {
+  var csrftoken = getCookie('csrftoken');
+
+  $.ajax({
+    type: "POST",
+    url: "createRow/",
+    data: { csrfmiddlewaretoken: csrftoken,
+        name: name
+          },
+    dataType: 'json',
+    success: function(data) {
+      if (data.exist) {
+        alert("Já existe uma coluna com esse nome")
+      } else {
+        $("#newrow").val('');
+        var atual = $("#rows").html();
+        $("#rows").html(atual + "<ul id=\"sortable1\" class=\"connectedSortable\">"
+          +"<li class=\"ui-state-disabled collection-header\"><h5>" + name + "</h5></li>"
+          +"</ul>")
+      }
+    }
+  });
+}
+
+function updateRows() {
+  var row_names = [];
+  $(".collection-header").each(
+    function(){
+      row_names.push($(this).text());
+    }
+  );
+  var csrftoken = getCookie('csrftoken');
+
+  $.ajax({
+    type: "POST",
+    url: "updateRows/",
+    data: { csrfmiddlewaretoken: csrftoken,
+            row_names: row_names
+          },
+    dataType: 'json'
+  });
 }
 
 function getCookie(name) {
@@ -32,29 +65,6 @@ function getCookie(name) {
     return cookieValue;
 }
 
-function updateRows() {
-  var rows = [];
-  $(".collection-header").each(
-    function(){
-      rows.push($(this).text());
-    }
-  );
-
-  var csrftoken = getCookie('csrftoken');
-
-  $.ajax({
-    type: "POST",
-    url: "updateRows/",
-    data: { csrfmiddlewaretoken: "csrftoken",
-            rows:"rows"
-          },
-    dataType: "json",
-    success: function() {
-      window.alert("NOICE");
-    }
-  });
-}
-
 $(function() {
   $("#sortable1, #sortable2").sortable( {
     items: "li:not(.ui-state-disabled)",
@@ -70,6 +80,9 @@ $(function() {
 
   $("#rows").sortable( {
     connectWith: ".rows",
+    stop: function(event, ui) {
+      updateRows();
+    }
   });
 
   $("#sortable1 li, #sortable2 li").disableSelection();
@@ -96,8 +109,10 @@ $(function() {
 
   $("input#newrow").keypress(function(e) {
     if(e.which == 13) {
-      newrow();
-      updateRows();
+      e.preventDefault();
+      var name = $("#newrow").val();
+      if (name != null && name != "")
+        newrow(name);
     }
   });
 

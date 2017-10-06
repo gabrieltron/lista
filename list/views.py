@@ -12,22 +12,37 @@ from django.urls import reverse
 from .models import Board, Row
 
 def updateRows(request):
-	if request.user.is_authenticated() & request.method == 'POST':
+	if request.user.is_authenticated() and request.method == 'POST':
+		row_names = request.POST.getlist('row_names[]')
 		board = Board.objects.get(username=request.user.username)
-		rows = boad.retrieve()
+		rows = board.retrieve()
+		print "CLEBER"
 		for row in rows:
 			board.remove(row, False)
 		i = 0
 		for name in row_names:
-			row = board.row_set.get(name=row_name)
+			row = board.row_set.get(name=name)
 			board.sort(row, i, False)
 			i+=1
-	return JsonResponse()
+	return JsonResponse(None, safe=False)
+
+def createRow(request):
+	if request.user.is_authenticated() and request.method == 'POST':
+		name = request.POST['name']
+		board = Board.objects.get(username=request.user.username)
+		exist = board.row_set.filter(name__iexact=name).exists()
+		if not exist:
+			r = board.row_set.create(name=name)
+			board.sort(r, board.size, True)
+		data = {'exist': exist}
+		return JsonResponse(data)
+	return HttpResponseRedirect(reverse('list:login', None))
 
 def list(request):
 	if request.user.is_authenticated():
 		board = Board.objects.get(username=request.user.username)
 		row = board.retrieve()
+
 		return render(request, 'list/list.html', {
 			'row': row
 			})
@@ -46,7 +61,6 @@ def login(request):
 		else:
 			auth_login(request, user)
 			return HttpResponseRedirect(reverse('list:list', None))
-
 	else:
 		return render(request, 'list/login.html')
 
