@@ -4,8 +4,8 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import authenticate
 from django.contrib.auth import login as auth_login
 from django.contrib.auth.models import User
-from django.http import HttpResponse, HttpResponseRedirect
-from django.template import loader
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
+from django.template import loader, RequestContext
 from django.db import IntegrityError
 from django.urls import reverse
 
@@ -13,12 +13,16 @@ from .models import Board, Row
 
 def updateRows(request):
 	if request.user.is_authenticated() & request.method == 'POST':
-		row_names = request.POST['rows']
 		board = Board.objects.get(username=request.user.username)
-	for name in rows:
-		user.sort()
-
-
+		rows = boad.retrieve()
+		for row in rows:
+			board.remove(row, False)
+		i = 0
+		for name in row_names:
+			row = board.row_set.get(name=row_name)
+			board.sort(row, i, False)
+			i+=1
+	return JsonResponse()
 
 def list(request):
 	if request.user.is_authenticated():

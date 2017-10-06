@@ -9,7 +9,7 @@ class Board(models.Model):
 	def __str__(self):
 		return self.username
 
-	def sort(self, row, position):
+	def sort(self, row, position, new):
 		if self.size != 0:
 			cur = self.row_set.get(id=self.first_row)
 			for i in range(0, (position - 1)):
@@ -25,10 +25,13 @@ class Board(models.Model):
 			cur.save()
 		else:
 			self.first_row = row.id
+			row.front = 0
+			row.back = 0
+			row.save()
 		self.size+=1
 		self.save()
 
-	def remove(self, row):
+	def remove(self, row, delete):
 		cur = self.row_set.get(id=self.first_row)
 		for i in range(0, self.size):
 			if cur.name == row.name:
@@ -39,13 +42,14 @@ class Board(models.Model):
 			back = self.row_set.get(id=cur.back)
 			back.front = cur.front
 			back.save()
-		elif cur.front != 0:
+		else:
 			self.first_row = cur.front
 		if cur.front != 0:
 			front = self.row_set.get(id=cur.front)
 			front.back = cur.back
 			front.save()
-		cur.delete()
+		if delete:
+			cur.delete()
 		self.size-=1
 		self.save()
 
