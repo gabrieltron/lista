@@ -6,6 +6,15 @@ function newli() {
       $("#sortable1").append("<li class=\"collection-item\">" + afazer + "</li>");
 }
 
+function updateItems(row) {
+  var item_names = [];
+  $(row).children(".collection-item").each(
+    function() {
+      item_names.push($(this).text());
+    }
+  );
+}
+
 function newrow(name) {
   var csrftoken = getCookie('csrftoken');
 
@@ -41,7 +50,7 @@ function updateRows() {
 
   $.ajax({
     type: "POST",
-    url: "updateRows/",
+    url: 'updateRows/',
     data: { csrfmiddlewaretoken: csrftoken,
             row_names: row_names
           },
@@ -71,10 +80,12 @@ $(function() {
     connectWith: ".connectedSortable",
     start: function(event, ui) {
       $(ui.item).css('border', '1px solid #e3e4e5');
+      var header = $(ui.item).parent().find(".collection-header");
     },
     stop: function(event, ui) {
       $(ui.item).css('border', 'none');
       $(ui.item).css('border-top', '1px solid #e3e4e5');
+      updateItems($(ui.item).parent());
     }
   });
 
@@ -104,7 +115,9 @@ $(function() {
   });
 
   $("#btn3").click(function() {
-    newrow();
+      var name = $("#newrow").val();
+      if (name != null && name != "")
+        newrow(name);
   });
 
   $("input#newrow").keypress(function(e) {

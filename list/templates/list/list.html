@@ -3,10 +3,15 @@
 {% block content %}
     <div class="lists">
       <div class="row rows ui-state-default" id="rows">
-      {% if row %}
-        {% for r in row %}
+      {% if containers %}
+        {% for container in containers %}
           <ul id="sortable1" class="connectedSortable">
-           	<li class="ui-state-default ui-state-disabled collection-header"><h5>{{ r.name }}</h5></li>
+           	<li class="ui-state-default ui-state-disabled collection-header"><h5>{{ container.row.name }}</h5></li>
+            {% if container.items %}
+              {% for item in container.items %}
+                <li class=\"collection-item\">{{ item.name }}</li>
+              {% endfor %}
+            {% endif %}
           </ul>
         {% endfor %}
       {% endif %}

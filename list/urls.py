@@ -8,5 +8,6 @@ urlpatterns = [
 	url(r'register/$', views.signup, name='signup'),
 	url(r'list/$', views.list, name='list'),
 	url(r'updateRows/$', views.updateRows, name='updateRows'),
-	url(r'createRow/$', views.createRow, name='createRow')
+	url(r'createRow/$', views.createRow, name='createRow'),
+	url(r'updateLists/$', views.updateLists, name='updateLists')
 ]

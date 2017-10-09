@@ -11,6 +11,20 @@ from django.urls import reverse
 
 from .models import Board, Row
 
+def updateLists(request):
+	if request.user.is_authenticated() and request.method == 'POST':
+		item_names = request.POST.getlist('item_names[]')
+		board = Board.objects.get(username=request.user.username)
+		row_name = request.POST['row_name']
+		row = board.row_set.get(name=row_name)
+		items = row.retrieve()
+		for item in items:
+			row.remove(item, True)
+		i = 0
+		for names in item_names:
+			row.sort(row.item_set.create(text=names), i, True)
+	return HttpResponseRedirect(reverse('list:login', None))
+
 def updateRows(request):
 	if request.user.is_authenticated() and request.method == 'POST':
 		row_names = request.POST.getlist('row_names[]')
@@ -24,7 +38,8 @@ def updateRows(request):
 			row = board.row_set.get(name=name)
 			board.sort(row, i, False)
 			i+=1
-	return JsonResponse(None, safe=False)
+		return JsonResponse(None, safe=False)
+	return HttpResponseRedirect(reverse('list:login', None))
 
 def createRow(request):
 	if request.user.is_authenticated() and request.method == 'POST':
@@ -41,10 +56,18 @@ def createRow(request):
 def list(request):
 	if request.user.is_authenticated():
 		board = Board.objects.get(username=request.user.username)
-		row = board.retrieve()
-
+		rows = board.retrieve()
+		containers = []
+		class Container():
+			def __init__(self, row, items):
+				self.row = row
+				self.items = items
+		for row in rows:
+			items = row.retrieve()
+			c = Container(row, items)
+			containers.append(c)
 		return render(request, 'list/list.html', {
-			'row': row
+			'containers': containers
 			})
 	else:
 		return HttpResponseRedirect(reverse('list:login', None))
