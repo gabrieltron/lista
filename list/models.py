@@ -94,7 +94,7 @@ class Row(models.Model):
 				item.save()
 				cur.save()
 			else:
-				item.back = cur.back
+				item.back = 0
 				cur.back = item.id
 				item.front = cur.id
 				self.first_item = item.id
@@ -111,16 +111,19 @@ class Row(models.Model):
 
 	def remove(self, item, delete):
 		cur = self.item_set.get(id=self.first_item)
+		j = 0
 		for i in range(0, self.size):
 			if cur.text == item.text:
 				break;
 			else:
 				cur = self.item_set.get(id=cur.front)
-		if cur.back != 0:
+				j+=1
+		if j != 0:
 			back = self.item_set.get(id=cur.back)
 			back.front = cur.front
 			back.save()
 		else:
+			print "puruuRUURUUR"
 			self.first_item = cur.front
 		if cur.front != 0:
 			front = self.item_set.get(id=cur.front)
