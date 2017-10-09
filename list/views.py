@@ -9,20 +9,51 @@ from django.template import loader, RequestContext
 from django.db import IntegrityError
 from django.urls import reverse
 
-from .models import Board, Row
+from .models import Board, Row, Item
+
+def compareItem(request):
+	if request.user.is_authenticated() and request.method == 'POST':
+		board = Board.objects.get(username=request.user.username)
+		text = request.POST['text']
+		rows = board.row_set.all()
+		exist = False
+		for row in rows:
+			exist = row.item_set.filter(text__iexact=text).exists()
+			if exist:
+				break
+		data = {'exist': exist}
+		return JsonResponse(data)
+	return HttpResponseRedirect(reverse('list:login', None))
+
+def deleteItem(request):
+	if request.user.is_authenticated() and request.method == 'POST':
+		board = Board.objects.get(username=request.user.username)
+		row = request.POST['row']
+		row = board.row_set.get(name=row)
+		item = request.POST['item']
+		item = row.item_set.get(text=item)
+		row.remove(item, True)
+		return JsonResponse(None, safe=False)
+	return HttpResponseRedirect(reverse('list:login', None))
 
 def updateLists(request):
 	if request.user.is_authenticated() and request.method == 'POST':
-		item_names = request.POST.getlist('item_names[]')
 		board = Board.objects.get(username=request.user.username)
-		row_name = request.POST['row_name']
-		row = board.row_set.get(name=row_name)
-		items = row.retrieve()
-		for item in items:
-			row.remove(item, True)
+		dest_row = request.POST['dest_row']
+		dest_row = board.row_set.get(name=dest_row)
+		item_names = request.POST.getlist('item_names[]')
 		i = 0
-		for names in item_names:
-			row.sort(row.item_set.create(text=names), i, True)
+		print item_names
+		for name in item_names:
+			try:
+				item = dest_row.item_set.get(text=name)
+				dest_row.sort(item, i, False)
+			except Item.DoesNotExist:
+				item = dest_row.item_set.create(text=name)
+				dest_row.sort(item, i, True)
+			i+=1
+		items = dest_row.retrieve()
+		return JsonResponse(None, safe=False)
 	return HttpResponseRedirect(reverse('list:login', None))
 
 def updateRows(request):
@@ -30,13 +61,12 @@ def updateRows(request):
 		row_names = request.POST.getlist('row_names[]')
 		board = Board.objects.get(username=request.user.username)
 		rows = board.retrieve()
-		print "CLEBER"
 		for row in rows:
 			board.remove(row, False)
 		i = 0
 		for name in row_names:
 			row = board.row_set.get(name=name)
-			board.sort(row, i, False)
+			board.sort(row, i, True)
 			i+=1
 		return JsonResponse(None, safe=False)
 	return HttpResponseRedirect(reverse('list:login', None))

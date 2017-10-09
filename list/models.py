@@ -9,7 +9,6 @@ class Board(models.Model):
 	def __str__(self):
 		return self.username
 
-	## remover new
 	def sort(self, row, position, new):
 		if self.size != 0:
 			cur = self.row_set.get(id=self.first_row)
@@ -31,7 +30,8 @@ class Board(models.Model):
 			row.front = 0
 			row.back = 0
 			row.save()
-		self.size+=1
+		if new:
+			self.size+=1
 		self.save()
 
 	def remove(self, row, delete):
@@ -60,7 +60,7 @@ class Board(models.Model):
 		x = []
 		try:
 			cur = self.row_set.get(id=self.first_row)
-			while cur.front != 0:
+			for i in range(0, self.size):
 				x.append(cur)
 				cur = self.row_set.get(id=cur.front)
 			x.append(cur)
@@ -79,31 +79,40 @@ class Row(models.Model):
 	def sort(self, item, position, new):
 		if self.size != 0:
 			cur = self.item_set.get(id=self.first_item)
-			for i in range(0, (position - 1)):
-				if cur.front == 0:
-					break
-				cur = self.item_set.get(id=cur.front)
-			item.front = cur.front
-			cur.front = item.id
-			item.back = cur.id
-			if item.front != 0:
-				f = self.item_set.get(id=item.front)
-				f.back = item.id
-				f.save()
-			item.save()
-			cur.save()
+			if position != 0:
+				for i in range(0, (position - 1)):
+					if cur.front == 0:
+						break
+					cur = self.item_set.get(id=cur.front)
+				item.front = cur.front
+				cur.front = item.id
+				item.back = cur.id
+				if item.front != 0:
+					f = self.item_set.get(id=item.front)
+					f.back = item.id
+					f.save()
+				item.save()
+				cur.save()
+			else:
+				item.back = cur.back
+				cur.back = item.id
+				item.front = cur.id
+				self.first_item = item.id
+				item.save()
+				cur.save()
 		else:
 			self.first_item = item.id
 			item.front = 0
 			item.back = 0
 			item.save()
-		self.size+=1
+		if new:
+			self.size+=1
 		self.save()
 
 	def remove(self, item, delete):
 		cur = self.item_set.get(id=self.first_item)
 		for i in range(0, self.size):
-			if cur.name == item.name:
+			if cur.text == item.text:
 				break;
 			else:
 				cur = self.item_set.get(id=cur.front)
@@ -124,12 +133,12 @@ class Row(models.Model):
 
 	def retrieve(self):
 		x = []
+		print self.size
 		try:
 			cur = self.item_set.get(id=self.first_item)
-			while cur.front != 0:
+			for i in range(0, self.size):
 				x.append(cur)
 				cur = self.item_set.get(id=cur.front)
-			x.append(cur)
 		except Item.DoesNotExist:
 			pass
 		return x
@@ -139,3 +148,5 @@ class Item(models.Model):
 	front = models.IntegerField(default=0)
 	text = models.TextField()
 	row = models.ForeignKey(Row, on_delete=models.CASCADE)
+	def __str__(self):
+		return self.text

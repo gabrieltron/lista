@@ -9,5 +9,7 @@ urlpatterns = [
 	url(r'list/$', views.list, name='list'),
 	url(r'updateRows/$', views.updateRows, name='updateRows'),
 	url(r'createRow/$', views.createRow, name='createRow'),
-	url(r'updateLists/$', views.updateLists, name='updateLists')
+	url(r'updateLists/$', views.updateLists, name='updateLists'),
+	url(r'deleteItem/$', views.deleteItem, name='deleteItem'),
+	url(r'compareItem/$', views.compareItem, name='compareItem')
 ]

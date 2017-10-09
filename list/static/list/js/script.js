@@ -1,18 +1,57 @@
-function newli() {
-    var afazer = $("#todo").val();
-    $("#todo").val('');
-    var atual =  $("#sortable1").html();
-    if (afazer != null && afazer != "")
-      $("#sortable1").append("<li class=\"collection-item\">" + afazer + "</li>");
+function newli(afazer) {
+    var csrftoken = getCookie('csrftoken');
+    $.ajax({
+      type: 'POST',
+      url: 'compareItem/',
+      data: { text: afazer,
+              csrfmiddlewaretoken: csrftoken
+            },
+      dataType: 'json',
+      success: function(data) {
+        if (data.exist) {
+          alert("Já existe uma tarefa com esse nome!");
+        } else {
+          $("ul").first().append("<li class=\"collection-item\">" + afazer + "</li>");
+          var row = $("ul").first();
+          updateItems(row);
+        }
+      }
+    });
 }
 
-function updateItems(row) {
+function deleteItem(row, item) {
+  var csrftoken = getCookie('csrftoken');
+  $.ajax({
+    type: 'POST',
+    url: 'deleteItem/',
+    data: { csrfmiddlewaretoken: csrftoken,
+            row: row,
+            item: item
+          },
+    dataType: 'json'
+  });
+}
+
+function updateItems(dest_row) {
   var item_names = [];
-  $(row).children(".collection-item").each(
+  $(dest_row).children(".collection-item").each(
     function() {
       item_names.push($(this).text());
     }
   );
+
+  var dest_name = $(dest_row).children(".collection-header").text();
+
+  var csrftoken = getCookie('csrftoken');
+  $.ajax({
+    type: 'POST',
+    url: 'updateLists/',
+    data: { csrfmiddlewaretoken: csrftoken,
+            item_names: item_names,
+            dest_row: dest_name
+          },
+    dataType: 'json'
+  });
 }
 
 function newrow(name) {
@@ -75,17 +114,22 @@ function getCookie(name) {
 }
 
 $(function() {
+  var bfr_row = "";
   $("#sortable1, #sortable2").sortable( {
     items: "li:not(.ui-state-disabled)",
     connectWith: ".connectedSortable",
     start: function(event, ui) {
       $(ui.item).css('border', '1px solid #e3e4e5');
-      var header = $(ui.item).parent().find(".collection-header");
+      bfr_row = $(ui.item).parent().find(".collection-header").text();
     },
     stop: function(event, ui) {
       $(ui.item).css('border', 'none');
       $(ui.item).css('border-top', '1px solid #e3e4e5');
       updateItems($(ui.item).parent());
+      dest_row = $(ui.item).parent().find(".collection-header").text();
+      if (dest_row != bfr_row) {
+        deleteItem(bfr_row, $(ui.item).text());
+      }
     }
   });
 
@@ -100,12 +144,18 @@ $(function() {
   $("#rows").disableSelection();
 
   $("#btn1").click(function() {
-    newli();
+    var afazer = $("#todo").val();
+    $("#todo").val('');
+    if (afazer != null && afazer != "")  
+      newli(afazer);
   });
 
   $("input#todo").keypress(function(e) {
     if(e.which == 13) {
-      newli();
+      var afazer = $("#todo").val();
+      $("#todo").val('');
+      if (afazer != null && afazer != "")
+        newli(afazer);
     }
   });
 
