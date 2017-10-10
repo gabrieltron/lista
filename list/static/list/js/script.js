@@ -11,7 +11,7 @@ function newli(afazer) {
         if (data.exist) {
           alert("Já existe uma tarefa com esse nome!");
         } else {
-          $("ul").first().append("<li class=\"collection-item\">" + afazer + "</li>");
+          $("ul").first().append("<li class=\"item\"><div class=\"collection-item\">" + afazer + "</div><i class=\"material-icons remove\">remove_circle_outline</i></li>");
           var row = $("ul").first();
           updateItems(row);
         }
@@ -34,12 +34,11 @@ function deleteItem(row, item) {
 
 function updateItems(dest_row) {
   var item_names = [];
-  $(dest_row).children(".collection-item").each(
+  $(dest_row).find(".collection-item").each(
     function() {
       item_names.push($(this).text());
     }
   );
-
   var dest_name = $(dest_row).children(".collection-header").text();
 
   var csrftoken = getCookie('csrftoken');
@@ -128,7 +127,7 @@ $(function() {
       updateItems($(ui.item).parent());
       dest_row = $(ui.item).parent().find(".collection-header").text();
       if (dest_row != bfr_row) {
-        deleteItem(bfr_row, $(ui.item).text());
+        deleteItem(bfr_row, $(ui.item).children(".collection-item").text());
       }
     }
   });
@@ -140,10 +139,10 @@ $(function() {
     }
   });
 
-  $("#sortable1 li, #sortable2 li").disableSelection();
-  $("#rows").disableSelection();
+  $(".collection-header").disableSelection();
 
-  $("#btn1").click(function() {
+  $(".lists").on('click', '#btn1', function() {
+    alert("kek");
     var afazer = $("#todo").val();
     $("#todo").val('');
     if (afazer != null && afazer != "")  
@@ -159,11 +158,6 @@ $(function() {
     }
   });
 
-  $("#btn2").click(function() {
-    var last = $("ul").last();
-    $(last).find('li:not(:first)').remove();
-  });
-
   $("#btn3").click(function() {
       var name = $("#newrow").val();
       if (name != null && name != "")
@@ -177,6 +171,13 @@ $(function() {
       if (name != null && name != "")
         newrow(name);
     }
+  });
+
+  $(".lists").on('click', '.remove', function() {
+    var item = $(this).parent().find(".collection-item").text();
+    var row = $(this).parent().parent().find(".collection-header").text();
+    $(this).parent().remove();
+    deleteItem(row, item);
   });
 
 });

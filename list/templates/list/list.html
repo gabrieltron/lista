@@ -9,7 +9,7 @@
            	<li class="ui-state-default ui-state-disabled collection-header"><h5>{{ container.row.name }}</h5></li>
             {% if container.items %}
               {% for item in container.items %}
-                <li class="collection-item">{{ item.text }}</li>
+                <li class="item"><div class="collection-item">{{ item.text }}</div><i class="material-icons remove">remove_circle_outline</i></li>
               {% endfor %}
             {% endif %}
           </ul>
@@ -25,8 +25,7 @@
         </div>
       </div>
       <div class="row">
-        <a class="waves-effect waves-light btn col s3 offset-s3" id="btn1">Cadastrar afazer</a>
-        <a class="waves-effect waves-light btn col s3" id="btn2">Limpar última</a>
+        <a class="waves-effect waves-light btn col s6 offset-s3 btn1">Cadastrar afazer</a>
       </div>
       <form method="post">
         {% csrf_token %}
