@@ -69,7 +69,7 @@ function newrow(name) {
       } else {
         $("#newrow").val('');
         var atual = $("#rows").html();
-        $("#rows").html(atual + "<ul id=\"sortable1\" class=\"connectedSortable\">"
+        $("#rows").html(atual + "<ul class=\"connectedSortable\">"
           +"<li class=\"ui-state-disabled collection-header\"><h5>" + name + "</h5></li>"
           +"</ul>")
       }
@@ -114,7 +114,7 @@ function getCookie(name) {
 
 $(function() {
   var bfr_row = "";
-  $("#sortable1, #sortable2").sortable( {
+  $(".connectedSortable").sortable( {
     items: "li:not(.ui-state-disabled)",
     connectWith: ".connectedSortable",
     start: function(event, ui) {
