@@ -65,13 +65,12 @@ function newrow(name) {
     dataType: 'json',
     success: function(data) {
       if (data.exist) {
-        alert("Já existe uma coluna com esse nome")
+        alert("Já existe uma coluna com esse nome");
       } else {
         $("#newrow").val('');
-        var atual = $("#rows").html();
-        $("#rows").html(atual + "<ul class=\"connectedSortable\">"
+        $("#rows").append("<ul class=\"connectedSortable\">"
           +"<li class=\"ui-state-disabled collection-header\"><h5>" + name + "</h5></li>"
-          +"</ul>")
+          +"</ul>");
       }
     }
   });
@@ -133,6 +132,7 @@ $(function() {
   });
 
   $("#rows").sortable( {
+    items: 'ul',
     connectWith: ".rows",
     stop: function(event, ui) {
       updateRows();
@@ -141,30 +141,35 @@ $(function() {
 
   $(".collection-header").disableSelection();
 
-  $(".lists").on('click', '#btn1', function() {
-    alert("kek");
+  $(".add-remove").on('click', '.btn1', function() {
     var afazer = $("#todo").val();
     $("#todo").val('');
-    if (afazer != null && afazer != "")  
+    if ($('.connectedSortable').length == 0) {
+        alert("Nenhuma coluna disponível!");
+    }
+    else if (afazer != null && afazer != "")  
       newli(afazer);
   });
 
-  $("input#todo").keypress(function(e) {
+  $(".add-remove").on('keypress', '#todo', function(e) {
     if(e.which == 13) {
       var afazer = $("#todo").val();
       $("#todo").val('');
-      if (afazer != null && afazer != "")
+      if ($('.connectedSortable').length == 0) {
+          alert("Nenhuma coluna disponível!");
+      }
+      else if (afazer != null && afazer != "")
         newli(afazer);
     }
   });
 
-  $("#btn3").click(function() {
+  $(".add-remove").on('click', '#btn3', function() {
       var name = $("#newrow").val();
       if (name != null && name != "")
         newrow(name);
   });
 
-  $("input#newrow").keypress(function(e) {
+  $(".add-remove").on('keypress', '#newrow', function(e) {
     if(e.which == 13) {
       e.preventDefault();
       var name = $("#newrow").val();
