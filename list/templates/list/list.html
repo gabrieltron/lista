@@ -6,10 +6,10 @@
       {% if containers %}
         {% for container in containers %}
           <ul id="sortable1" class="connectedSortable">
-           	<li class="ui-state-default ui-state-disabled collection-header"><h5>{{ container.row.name }}</h5></li>
+           	<li class="ui-state-default ui-state-disabled"><div class="collection-header"><h5>{{ container.row.name }}</h5></div><i class='material-icons remove-row'>remove_circle_outline</i></li>
             {% if container.items %}
               {% for item in container.items %}
-                <li class="item"><div class="collection-item">{{ item.text }}</div><i class="material-icons remove">remove_circle_outline</i></li>
+                <li class="item"><div class="collection-item">{{ item.name }}</div><i class="material-icons remove">remove_circle_outline</i></li>
               {% endfor %}
             {% endif %}
           </ul>
@@ -39,5 +39,8 @@
             <button type="button" class="waves-effec waves-light btn col s6 offset-s3" id="btn3">Cadastrar coluna</button>
         </div>
       </form>
+      <div class="row">
+        <a href="{% url 'list:login' %}" class="waves-effect waves-light btn col s1 offset-s8" id="logoff">Logoff</a>
+      </div>
     </div>
 {% endblock %}

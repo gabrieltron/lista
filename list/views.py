@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from django.shortcuts import render, redirect
 from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate, logout
 from django.contrib.auth import login as auth_login
 from django.contrib.auth.models import User
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
@@ -11,14 +11,29 @@ from django.urls import reverse
 
 from .models import Board, Row, Item
 
+def logoff(request):
+	if request.user.is_authenticated():
+		logout(request)
+	else:
+		return HttpResponseRedirect(reverse('list:login', None))
+
+def deleteRow(request):
+	if request.user.is_authenticated() and request.method == 'POST':
+		board = Board.objects.get(username=request.user.username)
+		row = request.POST['row']
+		row = board.row_set.get(name=row)
+		board.remove(row, True)
+		return JsonResponse(None, safe=False)
+	return HttpResponseRedirect(reverse('list:login', None))
+
 def compareItem(request):
 	if request.user.is_authenticated() and request.method == 'POST':
 		board = Board.objects.get(username=request.user.username)
-		text = request.POST['text']
+		name = request.POST['text']
 		rows = board.row_set.all()
 		exist = False
 		for row in rows:
-			exist = row.item_set.filter(text__iexact=text).exists()
+			exist = row.item_set.filter(name__iexact=name).exists()
 			if exist:
 				break
 		data = {'exist': exist}
@@ -31,7 +46,7 @@ def deleteItem(request):
 		row = request.POST['row']
 		row = board.row_set.get(name=row)
 		item = request.POST['item']
-		item = row.item_set.get(text=item)
+		item = row.item_set.get(name=item)
 		row.remove(item, True)
 		return JsonResponse(None, safe=False)
 	return HttpResponseRedirect(reverse('list:login', None))
@@ -46,10 +61,10 @@ def updateLists(request):
 		print item_names
 		for name in item_names:
 			try:
-				item = dest_row.item_set.get(text=name)
+				item = dest_row.item_set.get(name=name)
 				dest_row.sort(item, i, False)
 			except Item.DoesNotExist:
-				item = dest_row.item_set.create(text=name)
+				item = dest_row.item_set.create(name=name)
 				dest_row.sort(item, i, True)
 			i+=1
 		items = dest_row.retrieve()

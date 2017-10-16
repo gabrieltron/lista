@@ -12,22 +12,12 @@ ul {
  	margin-top: 3vh;
  }
 
- .hide {
- 	display: none;
- }
-
-
 #sortable1, #sortable2, #sortable3, #sortable4, #rows {
 	overflow: visible;
 }
 
 .rows {
 	font-size: 0px;
-}
-
-.remove {
-	float: right;
-	font-size: 1vw;
 }
 
 table {
@@ -45,17 +35,25 @@ table {
 	border-top: 1px solid #e3e4e5;
 }
 
-.collection-item{
-	display: inline-block;
-}
-
-.button {
-}
-
 .ui-state-disabled {
 	cursor: default;
 	font-weight: bold;
 	text-align: center;
+}
+
+.collection-item, .collection-header{
+	display: inline-block;
+}
+
+.remove, .remove-row{
+	float: right;
+	font-size: 1vw;
+	cursor: pointer;
+}
+
+.remove-row {
+	margin-top: 0.75vw;
+	margin-right: 1vw;
 }
 
 body {
