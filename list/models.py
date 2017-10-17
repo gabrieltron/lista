@@ -46,6 +46,8 @@ class List(models.Model):
 				current.back = element.id
 				element.front = current.id
 				self.first_element = element.id
+				print element.front
+				print current.id
 				element.save()
 				current.save()
 		else:

@@ -84,6 +84,10 @@ function newrow(name) {
 				$("#rows").append("<ul class=\"connectedSortable\">"
 					+"<li class=\"ui-state-disabled\"><div class='collection-header'><h5>" + name + "</h5></div><i class='material-icons remove-row'>remove_circle_outline</i></li>"
 					+"</ul>");
+				$(".connectedSortable").sortable( {
+					items: "li:not(.ui-state-disabled)",
+					connectWith: ".connectedSortable"
+				});
 			}
 		}
 	});
@@ -146,7 +150,7 @@ $(function() {
 
 	$("#rows").sortable( {
 		items: 'ul',
-		connectWith: ".rows",
+		connectWith: "#rows",
 		stop: function(event, ui) {
 			updateRows();
 		}

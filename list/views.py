@@ -8,17 +8,18 @@ from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.template import loader, RequestContext
 from django.db import IntegrityError
 from django.urls import reverse
+from django.contrib.auth.decorators import login_required
 
 from .models import Board, Row, Item
 
+@login_required()
 def logoff(request):
-	if request.user.is_authenticated():
-		logout(request)
-	else:
-		return HttpResponseRedirect(reverse('list:login', None))
+	logout(request)
+	return HttpResponseRedirect(reverse('list:login', None))
 
+@login_required()
 def deleteRow(request):
-	if request.user.is_authenticated() and request.method == 'POST':
+	if request.method == 'POST':
 		board = Board.objects.get(username=request.user.username)
 		row = request.POST['row']
 		row = board.row_set.get(name=row)
@@ -26,8 +27,9 @@ def deleteRow(request):
 		return JsonResponse(None, safe=False)
 	return HttpResponseRedirect(reverse('list:login', None))
 
+@login_required()
 def compareItem(request):
-	if request.user.is_authenticated() and request.method == 'POST':
+	if request.method == 'POST':
 		board = Board.objects.get(username=request.user.username)
 		name = request.POST['text']
 		rows = board.row_set.all()
@@ -40,8 +42,9 @@ def compareItem(request):
 		return JsonResponse(data)
 	return HttpResponseRedirect(reverse('list:login', None))
 
+@login_required()
 def deleteItem(request):
-	if request.user.is_authenticated() and request.method == 'POST':
+	if request.method == 'POST':
 		board = Board.objects.get(username=request.user.username)
 		row = request.POST['row']
 		row = board.row_set.get(name=row)
@@ -51,8 +54,9 @@ def deleteItem(request):
 		return JsonResponse(None, safe=False)
 	return HttpResponseRedirect(reverse('list:login', None))
 
+@login_required()
 def updateLists(request):
-	if request.user.is_authenticated() and request.method == 'POST':
+	if request.method == 'POST':
 		board = Board.objects.get(username=request.user.username)
 		dest_row = request.POST['dest_row']
 		dest_row = board.row_set.get(name=dest_row)
@@ -71,8 +75,9 @@ def updateLists(request):
 		return JsonResponse(None, safe=False)
 	return HttpResponseRedirect(reverse('list:login', None))
 
+@login_required()
 def updateRows(request):
-	if request.user.is_authenticated() and request.method == 'POST':
+	if request.method == 'POST':
 		row_names = request.POST.getlist('row_names[]')
 		board = Board.objects.get(username=request.user.username)
 		rows = board.retrieve()
@@ -86,8 +91,9 @@ def updateRows(request):
 		return JsonResponse(None, safe=False)
 	return HttpResponseRedirect(reverse('list:login', None))
 
+@login_required()
 def createRow(request):
-	if request.user.is_authenticated() and request.method == 'POST':
+	if request.method == 'POST':
 		name = request.POST['name']
 		board = Board.objects.get(username=request.user.username)
 		exist = board.row_set.filter(name__iexact=name).exists()
@@ -98,24 +104,22 @@ def createRow(request):
 		return JsonResponse(data)
 	return HttpResponseRedirect(reverse('list:login', None))
 
+@login_required()
 def list(request):
-	if request.user.is_authenticated():
-		board = Board.objects.get(username=request.user.username)
-		rows = board.retrieve()
-		containers = []
-		class Container():
-			def __init__(self, row, items):
-				self.row = row
-				self.items = items
-		for row in rows:
-			items = row.retrieve()
-			c = Container(row, items)
-			containers.append(c)
-		return render(request, 'list/list.html', {
-			'containers': containers
-			})
-	else:
-		return HttpResponseRedirect(reverse('list:login', None))
+	board = Board.objects.get(username=request.user.username)
+	rows = board.retrieve()
+	containers = []
+	class Container():
+		def __init__(self, row, items):
+			self.row = row
+			self.items = items
+	for row in rows:
+		items = row.retrieve()
+		c = Container(row, items)
+		containers.append(c)
+	return render(request, 'list/list.html', {
+		'containers': containers
+	})
 
 def login(request):
 	if request.method == 'POST':
@@ -129,6 +133,8 @@ def login(request):
 		else:
 			auth_login(request, user)
 			return HttpResponseRedirect(reverse('list:list', None))
+	elif request.user.is_authenticated():
+		return HttpResponseRedirect(reverse('list:list', None))
 	else:
 		return render(request, 'list/login.html')
 
