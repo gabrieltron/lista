@@ -12,6 +12,19 @@ from django.contrib.auth.decorators import login_required
 
 from .models import Board, Row, Item
 
+@login_required
+def checkPermission(request):
+	if request.method == 'POST':
+		number_rows = request.POST['number_rows']
+		permission = True
+		if int(number_rows) > 4:
+			if not(request.user.groups.filter(name='premium').exists()):
+				permission = False
+		data = {'permission': permission}
+		return JsonResponse(data)
+	else:
+		return HttpResponseRedirect(reverse('list:login', None))
+
 @login_required()
 def logoff(request):
 	logout(request)
@@ -153,7 +166,7 @@ def signup(request):
 					'error_message': "Esse usuário já existe :("
 					})
 			user.save()
-			q = Board(username=username)
+			q = Board(username=username, user=user)
 			q.save()
 			auth_login(request, user)
 			return HttpResponseRedirect(reverse('list:list', None))

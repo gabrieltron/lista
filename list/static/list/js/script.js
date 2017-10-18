@@ -66,31 +66,59 @@ function updateItems(dest_row) {
 	});
 }
 
-function newrow(name) {
+function getPermission() {
 	var csrftoken = getCookie('csrftoken');
-
+	var number_rows = $('ul').length;
+	var permission;
 	$.ajax({
-		type: "POST",
-		url: "createRow/",
-		data: { csrfmiddlewaretoken: csrftoken,
-				name: name
-			  },
+		async: false,
+		type: 'POST',
+		url: 'checkPermission/',
+		data: {
+			csrfmiddlewaretoken: csrftoken,
+			number_rows: number_rows
+		},
 		dataType: 'json',
 		success: function(data) {
-			if (data.exist) {
-				alert("Já existe uma coluna com esse nome");
+			if (data.permission) {
+				permission = true;
+
 			} else {
-				$("#newrow").val('');
-				$("#rows").append("<ul class=\"connectedSortable\">"
-					+"<li class=\"ui-state-disabled\"><div class='collection-header'><h5>" + name + "</h5></div><i class='material-icons remove-row'>remove_circle_outline</i></li>"
-					+"</ul>");
-				$(".connectedSortable").sortable( {
-					items: "li:not(.ui-state-disabled)",
-					connectWith: ".connectedSortable"
-				});
+				alert("Seu plano atual não permite mais colunas");
+				permission = false;
 			}
 		}
 	});
+	return permission;
+}
+
+function newrow(name) {
+	var csrftoken = getCookie('csrftoken');
+	var allowed = getPermission();
+	if (allowed) {
+		$.ajax({
+			type: "POST",
+			url: "createRow/",
+			data: { csrfmiddlewaretoken: csrftoken,
+					name: name
+				  },
+			dataType: 'json',
+			success: function(data) {
+				if (data.exist) {
+					alert("Já existe uma coluna com esse nome");
+				} else {
+					$("#newrow").val('');
+					$("#rows").append("<ul class=\"connectedSortable\">"
+						+"<li class=\"ui-state-disabled\"><div class='collection-header'><h5>" + name + "</h5></div><i class='material-icons remove-row'>remove_circle_outline</i></li>"
+						+"</ul>");
+					$(".connectedSortable").sortable( {
+						items: "li:not(.ui-state-disabled)",
+						connectWith: ".connectedSortable"
+					});
+				}
+			}
+		});
+	}
 }
 
 function updateRows() {
@@ -146,6 +174,11 @@ $(function() {
 				deleteItem(bfr_row, $(ui.item).children(".collection-item").text());
 			}
 		}
+	});
+
+	$(document).ready(function(){
+		// the "href" attribute of the modal trigger must specify the modal ID that wants to be triggered
+		$('.modal').modal();
 	});
 
 	$("#rows").sortable( {

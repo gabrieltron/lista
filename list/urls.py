@@ -13,5 +13,6 @@ urlpatterns = [
 	url(r'deleteItem/$', views.deleteItem, name='deleteItem'),
 	url(r'compareItem/$', views.compareItem, name='compareItem'),
 	url(r'deleteRow/$', views.deleteRow, name='deleteRow'),
-	url(r'logoff', views.logoff, name='logoff')
+	url(r'logoff', views.logoff, name='logoff'),
+	url(r'checkPermission/', views.checkPermission, name='checkPermission')
 ]

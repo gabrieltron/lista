@@ -1,7 +1,7 @@
 {% extends 'list/base.html' %}
 
 {% block content %}
-    <div class="lists">
+    <section class="lists">
       <div class="row ui-state-default" id="rows">
       {% if containers %}
         {% for container in containers %}
@@ -16,12 +16,12 @@
         {% endfor %}
       {% endif %}
       </div>
-    </div>
-    <div class="add-remove">
+    </section>
+    <section class="add-remove">
       <div class="row">
         <div class="input-field col s6 offset-s3">
           <input id="todo" type="text">
-          <label for="todo">Digite um afazer</label>
+          <label for="todo" class="active">Digite um afazer</label>
         </div>
       </div>
       <div class="row">
@@ -36,11 +36,25 @@
           </div>
         </div>
         <div class="row">
-            <button type="button" class="waves-effec waves-light btn col s6 offset-s3" id="btn3">Cadastrar coluna</button>
+            <button type="button" class="waves-effect waves-light btn col s6 offset-s3" id="btn3">Cadastrar coluna</button>
         </div>
       </form>
       <div class="row">
-        <a href="{% url 'list:login' %}" class="waves-effect waves-light btn col s1 offset-s8" id="logoff">Logoff</a>
+        <a class="waves-effect waves-light btn col s1 offset-s3 modal-trigger" href="#upgrade">Upgrade</a>
+        <a href="{% url 'list:login' %}" class="waves-effect waves-light btn col s1 offset-s4" id="logoff">Logoff</a>
       </div>
-    </div>
+    </section>
+    <section id="upgrade" class="modal modal-fixed-footer">
+      <div class="modal-content">
+        <div class="row">
+          <div class="input-field col s3">
+            <input id="#full_name" type="text">
+            <label for="#full_name">Nome</label>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <a class="modal-action modal-close waves-green btn-flat">Pagar</a>
+      </div>
+    </section>
 {% endblock %}
