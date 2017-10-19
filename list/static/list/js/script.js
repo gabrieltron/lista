@@ -178,7 +178,11 @@ $(function() {
 
 	$(document).ready(function(){
 		// the "href" attribute of the modal trigger must specify the modal ID that wants to be triggered
-		$('.modal').modal();
+		$('.modal').modal({
+			ready: function(modal, trigger) { // Callback for Modal open. Modal and trigger parameters available.
+				$('.carousel').carousel();
+      		}
+		});
 	});
 
 	$("#rows").sortable( {
@@ -246,6 +250,18 @@ $(function() {
 		$.ajax({
 			type: 'POST',
 			url: 'logoff/',
+			data: {
+				csrfmiddlewaretoken: csrftoken
+			},
+			dataType: 'json'
+		});
+	});
+
+	$("#pagar").on('click', function() {
+		var csrftoken = getCookie('csrftoken');
+		$.ajax({
+			type: 'POST',
+			url: 'upgradeUser/',
 			data: {
 				csrfmiddlewaretoken: csrftoken
 			},

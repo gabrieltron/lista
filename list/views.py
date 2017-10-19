@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import authenticate, logout
 from django.contrib.auth import login as auth_login
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.template import loader, RequestContext
 from django.db import IntegrityError
@@ -12,7 +12,16 @@ from django.contrib.auth.decorators import login_required
 
 from .models import Board, Row, Item
 
-@login_required
+@login_required()
+def upgradeUser(request):
+	if request.method == 'POST':
+		group = Group.objects.get(name='premium')
+		group.user_set.add(request.user)
+		return JsonResponse(None, safe=False)
+	else:
+		return HttpResponseRedirect(reverse('list:login', None))
+
+@login_required()
 def checkPermission(request):
 	if request.method == 'POST':
 		number_rows = request.POST['number_rows']
